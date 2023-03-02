@@ -356,7 +356,3 @@ void init_board(struct Chessboard* board){
     set_gameState(board, "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
-char* get_PossibleMoves (struct Chessboard* board,  char index){
-    char ;
-    return
-}
