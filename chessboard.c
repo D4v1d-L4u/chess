@@ -356,3 +356,18 @@ void init_board(struct Chessboard* board){
     set_gameState(board, "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
+char* get_possible_moves (struct Chessboard* board,  char index){
+    char* possible_moves = calloc(27, 1);
+    if(possible_moves == NULL){
+        printf("calloc failed.\n");
+        exit(EXIT_FAILURE);
+    }
+    if(index > 63){
+        printf("%d is illegal index for chessboard.\n", index);
+    }
+    char chessPiece = *(board->gameState + index);
+    switch (chessPiece) {
+
+    }
+    return possible_moves;
+}
