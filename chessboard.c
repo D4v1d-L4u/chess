@@ -110,92 +110,42 @@ void set_gameState(struct Chessboard* board, char* fen){
     while (*current && *current != ' '){
         if(i > 63){
             printf("FAL is invalid.\n");
-            return;
+            exit(EXIT_FAILURE);
         }
-        switch (*current) { // TODO find a alternative for the switch here
+        switch (*current) {
             case 'r':
-                board->gameState[i] = 'r';
-                i++;
-                break;
             case 'n':
-                board->gameState[i] = 'n';
-                i++;
-                break;
             case 'b':
-                board->gameState[i] = 'b';
-                i++;
-                break;
             case 'q':
-                board->gameState[i] = 'q';
-                i++;
-                break;
             case 'k':
-                board->gameState[i] = 'k';
-                i++;
-                break;
             case 'p':
-                board->gameState[i] = 'p';
-                i++;
-                break;
-
             case 'R':
-                board->gameState[i] = 'R';
-                i++;
-                break;
             case 'N':
-                board->gameState[i] = 'N';
-                i++;
-                break;
             case 'B':
-                board->gameState[i] = 'B';
-                i++;
-                break;
             case 'Q':
-                board->gameState[i] = 'Q';
-                i++;
-                break;
             case 'K':
-                board->gameState[i] = 'K';
-                i++;
-                break;
             case 'P':
-                board->gameState[i] = 'P';
+                board->gameState[i] = *current;
                 i++;
                 break;
-
             case '/':
                 if(i%8 != 0){
                     i += 8 - i%8;
                 }
                 break;
-
             case '1':
-                i += 1;
-                break;
             case '2':
-                i += 2;
-                break;
             case '3':
-                i += 3;
-                break;
             case '4':
-                i += 4;
-                break;
             case '5':
-                i += 5;
-                break;
             case '6':
-                i += 6;
-                break;
             case '7':
-                i += 7;
-                break;
             case '8':
-                i += 8;
+                i += *current-48;
                 break;
             default:
                 printf("FAL is invalid.\n");
-                return;
+                exit(EXIT_FAILURE);
         }
         current++;
     }
@@ -209,7 +159,7 @@ void set_gameState(struct Chessboard* board, char* fen){
     }
     else{
         printf("FAL is invalid.\n");
-        return;
+        exit(EXIT_FAILURE);
     }
     current += 2;
 
@@ -233,13 +183,13 @@ void set_gameState(struct Chessboard* board, char* fen){
                 break;
             default:
                 printf("FAL is invalid.\n");
-                return;
+                exit(EXIT_FAILURE);
         }
         current++;
     }
     if(board->castling > 15){
         printf("FAL is invalid.\n");
-        return;
+        exit(EXIT_FAILURE);
     }
     current++;
 
@@ -253,6 +203,7 @@ void set_gameState(struct Chessboard* board, char* fen){
         if(board->en_passant == -1){
             board->en_passant = 0;
             printf("FAL is invalid.\n");
+            exit(EXIT_FAILURE);
         }
     }
     current += 2;
@@ -393,6 +344,7 @@ char* get_possible_moves (struct Chessboard* board,  char index){
     }
     if(index > 63){
         printf("%d is illegal index for chessboard.\n", index);
+        return NULL;
     }
     char chessPiece = *(board->gameState + index);
 
