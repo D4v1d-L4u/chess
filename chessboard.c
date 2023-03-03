@@ -8,69 +8,25 @@
 char convert_AlgebraicNotation_in_index(char algebraicNotation[3]) {
     char output;
     algebraicNotation[0] = tolower(algebraicNotation[0]);
-    switch (algebraicNotation[0]) {
-        case 'a':
-            output = 0;
-            break;
-        case 'b':
-            output = 1;
-            break;
-        case 'c':
-            output = 2;
-            break;
-        case 'd':
-            output = 3;
-            break;
-        case 'e':
-            output = 4;
-            break;
-        case 'f':
-            output = 5;
-            break;
-        case 'g':
-            output = 6;
-            break;
-        case 'h':
-            output = 7;
-            break;
-        default:
-            printf("Invalid algebraic notation\n");
-            return -1;
+    if(algebraicNotation[0] < 'a' || algebraicNotation[0] > 'h'){
+        printf("%s is an invalid AlgebraicNotation.", algebraicNotation);
+        return  -1;
     }
-    switch (algebraicNotation[1]) {
-        case '1':
-            output += 56;
-            break;
-        case '2':
-            output += 48;
-            break;
-        case '3':
-            output += 40;
-            break;
-        case '4':
-            output += 32;
-            break;
-        case '5':
-            output += 24;
-            break;
-        case '6':
-            output += 16;
-            break;
-        case '7':
-            output += 8;
-            break;
-        case '8':
-            output += 0;
-            break;
-        default:
-            printf("Invalid algebraic notation\n");
-            return -1;
+    output = algebraicNotation[0] - 97;
+    if(algebraicNotation[1] < '1' || algebraicNotation[1] > '8'){
+        printf("%s is an invalid AlgebraicNotation.", algebraicNotation);
+        return  -1;
     }
+    output +=  (8 - (algebraicNotation[1]-48))*8;
     return output;
 }
 
 // TODO assure that dest is size 3
 void convert_index_in_AlgebraicNotation(char dest[3], char index){
+    if (index < 0 || index > 63){
+        printf("%d is an invalid index", index);
+        exit(EXIT_FAILURE);
+    }
     sprintf(dest, "%c%d", 97 + index%8, 8 - (index / 8));
 }
 
