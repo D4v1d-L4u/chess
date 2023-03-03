@@ -356,6 +356,35 @@ void init_board(struct Chessboard* board){
     set_gameState(board, "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
+char is_white_piece(char piece){
+    switch (piece) {
+        case 'R':
+        case 'N':
+        case 'B':
+        case 'Q':
+        case 'K':
+        case 'P':
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+char is_black_piece(char piece){
+    switch (piece) {
+        case 'r':
+        case 'n':
+        case 'b':
+        case 'q':
+        case 'k':
+        case 'p':
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+// checks not if through the move the own king can be taken FIX
 char* get_possible_moves (struct Chessboard* board,  char index){
     char* possible_moves = calloc(27, 1);
     if(possible_moves == NULL){
@@ -366,8 +395,66 @@ char* get_possible_moves (struct Chessboard* board,  char index){
         printf("%d is illegal index for chessboard.\n", index);
     }
     char chessPiece = *(board->gameState + index);
-    switch (chessPiece) {
 
+
+    char current_row = index/8;
+    int i = 0; // change to char
+    switch (chessPiece) {
+        case 'r':
+            break;
+        case 'n':
+            break;
+        case 'b':
+            // normal move
+            if(*(board->gameState+index +  8) == 0){
+                possible_moves[i] = index + 8;
+                i++;
+            }
+            // two squares at once (only if piece is at its starting point)
+            if(*(board->gameState+index +  16) == 0 &&index > 7 && index < 16){
+                possible_moves[i] = index + 16;
+                i++;
+            }
+            // take a white piece on the left (whites perspective)
+            if(is_black_piece(*(board->gameState + (index+7))) && ((index+9)/8)-1 == current_row){
+                possible_moves[i] = index + 7;
+                i++;
+            }
+            // take a white piece on the right (whites perspective)
+            if(is_black_piece(*(board->gameState + (index+9))) && ((index+9)/8)-1 == current_row){
+                possible_moves[i] = index + 9;
+                i++;
+            }
+            // en passant check
+            if((index+1 == board->en_passant && ((index+1)/8) == current_row) || (index-1 == board->en_passant && ((index-1)/8) == current_row)){
+                possible_moves[i] = board->en_passant+8;
+            }
+            break;
+        case 'q':
+            break;
+        case 'k':
+            break;
+        case 'p':
+            break;
+
+        case 'R':
+            break;
+        case 'N':
+            break;
+        case 'B':
+            break;
+        case 'Q':
+            break;
+        case 'K':
+            break;
+        case 'P':
+            break;
+        case '\0':
+            printf("Selected an empty square.\n");
+            return possible_moves;
+        default:
+            printf("%c is invalid piece on board.", chessPiece);
+            exit(EXIT_FAILURE);
     }
     return possible_moves;
 }
