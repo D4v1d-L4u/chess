@@ -47,7 +47,7 @@ int main(void){
     printf("%s\n",fen);
     free(fen);
 
-
+    // idea for printing out the chessboard
     printf("\033[0m\033[41m"); // White foreground / Red background
     printf("Something\n");
     printf("\033[0m"); //Resets the text to default color.

@@ -71,34 +71,7 @@ char convert_AlgebraicNotation_in_index(char algebraicNotation[3]) {
 
 // TODO assure that dest is size 3
 void convert_index_in_AlgebraicNotation(char dest[3], char index){
-    switch (index%8) {
-        case 0:
-            sprintf(dest, "a%d", 8 - (index / 8));
-            break;
-        case 1:
-            sprintf(dest, "b%d", 8 - (index / 8));
-            break;
-        case 2:
-            sprintf(dest, "c%d", 8 - (index / 8));
-            break;
-        case 3:
-            sprintf(dest, "d%d", 8 - (index / 8));
-            break;
-        case 4:
-            sprintf(dest, "e%d", 8 - (index / 8));
-            break;
-        case 5:
-            sprintf(dest, "f%d", 8 - (index / 8));
-            break;
-        case 6:
-            sprintf(dest, "g%d", 8 - (index / 8));
-            break;
-        case 7:
-            sprintf(dest, "h%d", 8 - (index / 8));
-            break;
-        default:
-            printf("Index is wrong!\n");
-    }
+    sprintf(dest, "%c%d", 97 + index%8, 8 - (index / 8));
 }
 
 // TODO make set_gameState check if chess rules are violated
@@ -350,7 +323,7 @@ char* get_possible_moves (struct Chessboard* board,  char index){
 
 
     char current_row = index/8;
-    int i = 0; // change to char
+    int i = 0;
     switch (chessPiece) {
         case 'r':
             break;
@@ -405,7 +378,7 @@ char* get_possible_moves (struct Chessboard* board,  char index){
             printf("Selected an empty square.\n");
             return possible_moves;
         default:
-            printf("%c is invalid piece on board.", chessPiece);
+            printf("%c is an invalid piece on board.", chessPiece);
             exit(EXIT_FAILURE);
     }
     return possible_moves;
