@@ -87,4 +87,6 @@ char* get_FEN(struct Chessboard* board);
  */
 void set_gameState(struct Chessboard* board, char* fen);
 
+//TODO only fot testing!!!!
+char* get_possible_moves (struct Chessboard* board,  char index);
 #endif //CHESS_CHESSBOARD_H
