@@ -264,7 +264,7 @@ char is_black_piece(char piece){
     }
 }
 
-// checks not if through the move the own king can be taken FIX
+// TODO Make testcases for this methode && checks not if through the move the own king can be taken FIX
 char* get_possible_moves (struct Chessboard* board,  char index){
     char* possible_moves = calloc(27, 1);
     if(possible_moves == NULL){
@@ -280,55 +280,394 @@ char* get_possible_moves (struct Chessboard* board,  char index){
 
     char current_row = index/8;
     int i = 0;
+    int k; // Iterator for iterating through the game-board
     switch (chessPiece) {
+        case 'K':
+        case 'k':
+            // move one right
+            if(index + 1 < 64  && (index+1)/8 == current_row){
+                if(*(board->gameState+1) == 0){
+                    possible_moves[i] = index + 1;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState+1))){
+                    possible_moves[i] = index + 1;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState+1))){
+                    possible_moves[i] = index + 1;
+                    i++;
+                }
+            }
+            // move one left
+            if(index - 1 > 0  && (index-1)/8 == current_row){
+                if(*(board->gameState-1) == 0){
+                    possible_moves[i] = index - 1;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState-1))){
+                    possible_moves[i] = index - 1;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState-1))){
+                    possible_moves[i] = index - 1;
+                    i++;
+                }
+            }
+            // move one down
+            if(index + 8 < 64){
+                if(*(board->gameState+8) == 0){
+                    possible_moves[i] = index + 8;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState+8))){
+                    possible_moves[i] = index + 8;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState+8))){
+                    possible_moves[i] = index + 8;
+                    i++;
+                }
+            }
+            // move one up
+            if(index - 8 > 0){
+                if(*(board->gameState-8) == 0){
+                    possible_moves[i] = index - 8;
+                } else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState-8))){
+                    possible_moves[i] = index - 8;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState-8))){
+                    possible_moves[i] = index - 8;
+                }
+            }
+            break;
+
+        case 'Q': // is a mix of rook and bishop
+        case 'q':
+        case 'R':
         case 'r':
-            break;
-        case 'n':
-            break;
+            // moving to the right (whites perspective)
+            k = 1;
+            while(index + k < 64  && *(board->gameState+k) == 0 && (index+k)/8 == current_row){
+                possible_moves[i] = index+k;
+                i++;
+                k++;
+            }
+            // check for taking a piece
+            if(is_white_piece(chessPiece)){
+                if(index + k < 64  && is_black_piece(*(board->gameState+k)) && (index+k)/8 == current_row){
+                    possible_moves[i] = index+k;
+                    i++;
+                }
+            }
+            else if(index + k < 64  && is_white_piece(*(board->gameState+k)) && (index+k)/8 == current_row){
+                possible_moves[i] = index+k;
+                i++;
+            }
+
+            // moving to the left (whites perspective)
+            k = 1;
+            while(index - k > 0 && *(board->gameState-k) == 0 && (index-k)/8 == current_row){
+                possible_moves[i] = index-k;
+                i++;
+                k--;
+            }
+            // check for taking a piece
+            if(is_white_piece(chessPiece)){
+                if(index - k > 0 && is_black_piece(*(board->gameState-k)) && (index-k)/8 == current_row){
+                    possible_moves[i] = index-k;
+                    i++;
+                }
+            }
+            else if(index - k > 0 && is_white_piece(*(board->gameState-k)) && (index-k)/8 == current_row){
+                possible_moves[i] = index-k;
+                i++;
+            }
+
+            // moving down (whites perspective)
+            k = 8;
+            while(index + k < 64  && *(board->gameState+k) == 0){
+                possible_moves[i] = index+k;
+                i++;
+                k +=8;
+            }
+            // check for taking a piece
+            if(is_white_piece(chessPiece)){
+                if(index + k < 64  && is_black_piece(*(board->gameState+k))){
+                    possible_moves[i] = index+k;
+                    i++;
+                }
+            }
+            else if(index + k < 64  && is_white_piece(*(board->gameState+k))){
+                possible_moves[i] = index+k;
+                i++;
+            }
+            // moving up (whites perspective)
+            k = 8;
+            while(index - k > 0  && *(board->gameState-k) == 0){
+                possible_moves[i] = index-k;
+                i++;
+                k -=8;
+            }
+            // check for taking a piece
+            if(is_white_piece(chessPiece)){
+                if(index - k > 0  && is_black_piece(*(board->gameState-k))){
+                    possible_moves[i] = index-k;
+                    i++;
+                }
+            }
+            else if(index - k > 0  && is_white_piece(*(board->gameState-k))){
+                    possible_moves[i] = index-k;
+                    i++;
+            }
+            // check for fallthrough for queen
+            if(chessPiece == 'r' || chessPiece == 'R'){ // causes some warnings witch prevent compilation
+                break;
+            }
+        case 'B':
         case 'b':
+            // moving to the lower right (whites perspective)
+            k = 9;
+            while(index + k < 64  && *(board->gameState+k) == 0 && ((index+k)/8)-(k/9) == current_row){
+                possible_moves[i] = index+k;
+                i++;
+                k += 9;
+            }
+            // check for taking a piece
+            if(is_white_piece(chessPiece)){
+                if(index + k < 64  && is_black_piece(*(board->gameState+k)) && ((index+k)/8)-(k/9) == current_row){
+                    possible_moves[i] = index+k;
+                    i++;
+                }
+            }
+            else if(index + k < 64  && is_white_piece(*(board->gameState+k)) && ((index+k)/8)-(k/9) == current_row){
+                possible_moves[i] = index+k;
+                i++;
+            }
+
+            // moving to the upper left (whites perspective)
+            k = 9;
+            while(index - k > 0 && *(board->gameState-k) == 0 && ((index-k)/8)+(k/9) == current_row){
+                possible_moves[i] = index-k;
+                i++;
+                k -= 9;
+            }
+            // check for taking a piece
+            if(is_white_piece(chessPiece)){
+                if(index - k > 0 && is_black_piece(*(board->gameState-k)) && ((index-k)/8)+(k/9) == current_row){
+                    possible_moves[i] = index-k;
+                    i++;
+                }
+            }
+            else if(index - k > 0 && is_white_piece(*(board->gameState-k)) && ((index-k)/8)+(k/9) == current_row){
+                possible_moves[i] = index-k;
+                i++;
+            }
+
+            // moving lower left (whites perspective)
+            k = 7;
+            while(index + k < 64  && *(board->gameState+k) == 0 && ((index+k)/8)-(k/9) == current_row){
+                possible_moves[i] = index+k;
+                i++;
+                k += 7;
+            }
+            // check for taking a piece
+            if(is_white_piece(chessPiece)){
+                if(index + k < 64  && is_black_piece(*(board->gameState+k)) && ((index+k)/8)-(k/9) == current_row){
+                    possible_moves[i] = index+k;
+                    i++;
+                }
+            }
+            else if(index + k < 64  && is_white_piece(*(board->gameState+k)) && ((index+k)/8)-(k/9) == current_row){
+                possible_moves[i] = index+k;
+                i++;
+            }
+            // moving upper right (whites perspective)
+            k = 7;
+            while(index - k > 0  && *(board->gameState-k) == 0 && ((index-k)/8)+(k/9) == current_row){
+                possible_moves[i] = index-k;
+                i++;
+                k -=7;
+            }
+            // check for taking a piece
+            if(is_white_piece(chessPiece)){
+                if(index - k > 0  && is_black_piece(*(board->gameState-k)) && ((index-k)/8)+(k/9) == current_row){
+                    possible_moves[i] = index-k;
+                }
+            }
+            else if(index - k > 0  && is_white_piece(*(board->gameState-k)) && ((index-k)/8)+(k/9) == current_row){
+                possible_moves[i] = index-k;
+             }
+            break;
+        case 'N':
+        case 'n':
+            // lower right (+17) (+10)
+            if(index + 17 < 64  && ((index+17)/8)-2 == current_row){
+                if(*(board->gameState+17) == 0){
+                    possible_moves[i] = index + 17;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState+17))){
+                    possible_moves[i] = index + 17;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState+17))){
+                    possible_moves[i] = index + 17;
+                    i++;
+                }
+            }
+            if(index + 10 < 64  && ((index+10)/8)-1 == current_row){
+                if(*(board->gameState+10) == 0){
+                    possible_moves[i] = index + 10;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState+10))){
+                    possible_moves[i] = index + 10;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState+10))){
+                    possible_moves[i] = index + 10;
+                    i++;
+                }
+            }
+            // lower left (+15) (+6)
+            if(index + 15 < 64  && ((index+15)/8)-2 == current_row){
+                if(*(board->gameState+15) == 0){
+                    possible_moves[i] = index + 15;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState+15))){
+                    possible_moves[i] = index + 15;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState+15))){
+                    possible_moves[i] = index + 15;
+                    i++;
+                }
+            }
+            if(index + 6 < 64  && ((index+6)/8)-1 == current_row){
+                if(*(board->gameState+6) == 0){
+                    possible_moves[i] = index + 6;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState+6))){
+                    possible_moves[i] = index + 6;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState+6))){
+                    possible_moves[i] = index + 6;
+                    i++;
+                }
+            }
+            // upper left (-17) (-10)
+            if(index + 17 > 0 && ((index-17)/8)+2 == current_row){
+                if(*(board->gameState-17) == 0){
+                    possible_moves[i] = index - 17;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState-17))){
+                    possible_moves[i] = index - 17;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState-17))){
+                    possible_moves[i] = index - 17;
+                    i++;
+                }
+            }
+            if(index - 10 > 0  && ((index-10)/8)+1 == current_row){
+                if(*(board->gameState-10) == 0){
+                    possible_moves[i] = index - 10;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState-10))){
+                    possible_moves[i] = index - 10;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState-10))){
+                    possible_moves[i] = index - 10;
+                    i++;
+                }
+            }
+            // upper right (-15) (-6)
+            if(index - 15 > 0  && ((index-15)/8)+2 == current_row){
+                if(*(board->gameState-15) == 0){
+                    possible_moves[i] = index - 15;
+                    i++;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState-15))){
+                    possible_moves[i] = index - 15;
+                    i++;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState-15))){
+                    possible_moves[i] = index - 15;
+                    i++;
+                }
+            }
+            if(index - 6 > 0  && ((index-6)/8)+1 == current_row){
+                if(*(board->gameState-6) == 0){
+                    possible_moves[i] = index - 6;
+                }
+                else if(is_white_piece(chessPiece) && is_black_piece(*(board->gameState-6))){
+                    possible_moves[i] = index - 6;
+                }
+                else if(is_black_piece(chessPiece) && is_white_piece(*(board->gameState-6))){
+                    possible_moves[i] = index - 6;
+                }
+            }
+            break;
+        case 'p':
             // normal move
             if(*(board->gameState+index +  8) == 0){
                 possible_moves[i] = index + 8;
                 i++;
+                // two squares at once (only if piece is at its starting point)
+                if(*(board->gameState+index +  16) == 0 && index > 7 && index < 16){
+                    possible_moves[i] = index + 16;
+                    i++;
+                }
             }
-            // two squares at once (only if piece is at its starting point)
-            if(*(board->gameState+index +  16) == 0 &&index > 7 && index < 16){
-                possible_moves[i] = index + 16;
-                i++;
-            }
+
             // take a white piece on the left (whites perspective)
-            if(is_black_piece(*(board->gameState + (index+7))) && ((index+9)/8)-1 == current_row){
+            if(is_white_piece(*(board->gameState + (index+7))) && ((index+7)/8)-1 == current_row){
                 possible_moves[i] = index + 7;
                 i++;
             }
             // take a white piece on the right (whites perspective)
-            if(is_black_piece(*(board->gameState + (index+9))) && ((index+9)/8)-1 == current_row){
+            if(is_white_piece(*(board->gameState + (index+9))) && ((index+9)/8)-1 == current_row){
                 possible_moves[i] = index + 9;
                 i++;
             }
+
             // en passant check
             if((index+1 == board->en_passant && ((index+1)/8) == current_row) || (index-1 == board->en_passant && ((index-1)/8) == current_row)){
                 possible_moves[i] = board->en_passant+8;
             }
             break;
-        case 'q':
-            break;
-        case 'k':
-            break;
-        case 'p':
-            break;
-
-        case 'R':
-            break;
-        case 'N':
-            break;
-        case 'B':
-            break;
-        case 'Q':
-            break;
-        case 'K':
-            break;
         case 'P':
+            // normal move
+            if(*(board->gameState+index -  8) == 0){
+                possible_moves[i] = index - 8;
+                i++;
+                // two squares at once (only if piece is at its starting point)
+                if(*(board->gameState+index -  16) == 0 && index > 47 && index < 56){
+                    possible_moves[i] = index - 16;
+                    i++;
+                }
+            }
+            // take a black piece on the right (whites perspective)
+            if(is_black_piece(*(board->gameState + (index-7))) && ((index-7)/8)+1 == current_row){
+                possible_moves[i] = index - 7;
+                i++;
+            }
+            // take a black piece on the left (whites perspective)
+            if(is_black_piece(*(board->gameState + (index-9))) && ((index-9)/8)+1 == current_row){
+                possible_moves[i] = index - 9;
+                i++;
+            }
+            // en passant check
+            if((index+1 == board->en_passant && ((index+1)/8) == current_row) || (index-1 == board->en_passant && ((index-1)/8) == current_row)){
+                possible_moves[i] = board->en_passant-8;
+            }
             break;
         case '\0':
             printf("Selected an empty square.\n");
