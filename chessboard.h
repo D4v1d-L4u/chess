@@ -46,6 +46,10 @@ struct Chessboard{
      * 1000 bit for black queen-side castling
      */
     char castling;
+
+    // saves the positions of the kings on the chessboard
+    char w_king_position;
+    char b_king_position;
 };
 
 /*
