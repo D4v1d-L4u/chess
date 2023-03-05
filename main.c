@@ -86,26 +86,46 @@ int main(void){
     highlight = get_possible_moves(&chessboard, 63);
     print_board(chessboard, highlight);
     free(highlight);
-    printf("->rook on index 63\n");
+    printf("->Rook on index 63\n");
 
     highlight = get_possible_moves(&chessboard, 35);
     print_board(chessboard, highlight);
     free(highlight);
-    printf("->pawn on index 35\n");
+    printf("->Pawn on index 35\n");
 
     highlight = get_possible_moves(&chessboard, 42);
     print_board(chessboard, highlight);
     free(highlight);
-    printf("->knight on index 42\n");
+    printf("->Knight on index 42\n");
 
     highlight = get_possible_moves(&chessboard, 59);
     print_board(chessboard, highlight);
     free(highlight);
-    printf("->rook on index 59\n");
+    printf("->Rook on index 59\n");
 
     highlight = get_possible_moves(&chessboard, 34);
     print_board(chessboard, highlight);
     free(highlight);
-    printf("->bishop on index 34\n");
+    printf("->Bishop on index 34\n");
+
+    highlight = get_possible_moves(&chessboard, 18);
+    print_board(chessboard, highlight);
+    free(highlight);
+    printf("->pawn on index 18\n");
+
+    highlight = get_possible_moves(&chessboard, 48);
+    print_board(chessboard, highlight);
+    free(highlight);
+    printf("->Pawn on index 48\n");
+
+    highlight = get_possible_moves(&chessboard, 58);
+    print_board(chessboard, highlight);
+    free(highlight);
+    printf("->King on index 58\n");
+
+    highlight = get_possible_moves(&chessboard, 4);
+    print_board(chessboard, highlight);
+    free(highlight);
+    printf("->king on index 4\n");
 }
 
