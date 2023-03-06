@@ -54,43 +54,44 @@ struct Chessboard{
 /*
  * Initialize the Chessboard to start the game.
  */
-void init_board(struct Chessboard* board);
+void init_board(struct Chessboard *board);
 
 /*
  * Moves a chess-piece 'from' a position 'to' another position.
- * Returns 0 if it was possible.
- * Returns 1 if it was not possible.
+ * Returns 1 if it was possible.
+ * Returns 0 if it was not possible.
  */
 // moves piece with user interaction
-int make_move(struct Chessboard* board);
+int make_move(struct Chessboard *board);
 // trys to move the pieces passed in the parameters (from->to)
-int quick_move(struct Chessboard* board, char* from, char* to);
+int quick_move(struct Chessboard *board, char from, char to);
 
 /*
  * Ends a chess game.
  */
-void surrender(struct Chessboard* board);
+void surrender(struct Chessboard *board);
+void draw(struct Chessboard *board);
 
 /*
  * Prints out the Chessboard.
  */
-void print_Chessboard(struct Chessboard* board);
+void print_Chessboard(struct Chessboard *board);
 
 /*
  * prints chessboard with highlighted legal moves
- * from a given position (in Algebraic-Notation)
+ * from a given position (takes the index of te game-board)
  */
-void highlight_legal_moves(struct Chessboard* board, char* position);
+void highlight_legal_moves(struct Chessboard *board, char position);
 
 /*
  * Prints out the state of the game in Forsyth-Edwards Notation (FEN)
  */
-char* get_FEN(struct Chessboard* board);
+char* get_FEN(struct Chessboard *board);
 
 /*
  * Takes Forsyth-Edwards Notation (FEN) and sets the state of the chessboard according to it
  */
-void set_gameState(struct Chessboard* board, char* fen);
+void set_gameState(struct Chessboard *board, char *fen);
 
 //TODO only fot testing!!!!
 char* get_possible_moves (struct Chessboard* board,  char index);
