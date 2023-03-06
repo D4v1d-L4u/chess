@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "chessboard.h"
 
-void print_board(struct Chessboard chessboard, char* highlithe) {
+void print_board(struct Chessboard chessboard, const char* highlithe) {
     char i = 0;
     while (i<64){
         if(i%8 == 0){
@@ -127,5 +127,12 @@ int main(void){
     print_board(chessboard, highlight);
     free(highlight);
     printf("->king on index 4\n");
+
+    quick_move(&chessboard, "e8", "g8");
+    print_board(chessboard, 0);
+    printf("->king(4) king-side castling\n");
+
+
+
 }
 
