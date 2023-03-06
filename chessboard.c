@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include "chessboard.h"
 #include "stringbuilder.h"
 
 char convert_AlgebraicNotation_in_index(char algebraicNotation[3]) {
     char output;
-    algebraicNotation[0] = tolower(algebraicNotation[0]);
     if(algebraicNotation[0] < 'a' || algebraicNotation[0] > 'h'){
         printf("%s is an invalid AlgebraicNotation.", algebraicNotation);
         return  -1;
@@ -31,7 +29,7 @@ void convert_index_in_AlgebraicNotation(char dest[3], char index){
 }
 
 // TODO make set_gameState check if chess rules are violated
-void set_gameState(struct Chessboard* board, char* fen){
+void set_gameState(struct Chessboard *board, char *fen){
     memset(board->gameState, 0, 64);
     char* current = &fen[0];
     int i = 0;
@@ -159,7 +157,7 @@ void set_gameState(struct Chessboard* board, char* fen){
 }
 
 // TODO remove stringbuilder and replace it with string of size 87 + 1
-char* get_FEN(struct Chessboard* board){ // max length  87
+char* get_FEN(struct Chessboard *board){ // max length  87
     struct Stringbuilder fen;
     init_stringbuilder(&fen);
     char emptySpaceCounter = 0;
@@ -240,7 +238,7 @@ char* get_FEN(struct Chessboard* board){ // max length  87
     return getString(&fen);
 }
 
-void init_board(struct Chessboard* board){
+void init_board(struct Chessboard *board){
     set_gameState(board, "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
@@ -274,7 +272,7 @@ char is_black_piece(char piece){
 
 
 // 1 if white is in check 0 if not
-char w_is_in_check(struct Chessboard* board){
+char w_is_in_check(struct Chessboard *board){
     char king_position = board->w_king_position;
     int current_row = king_position/8;
     // checking for pawns
@@ -449,7 +447,7 @@ char w_is_in_check(struct Chessboard* board){
     }
     return 0;
 }
-char b_is_in_check(struct Chessboard* board){
+char b_is_in_check(struct Chessboard *board){
     char king_position = board->b_king_position;
     int current_row = king_position/8;
     // checking for pawns
@@ -628,7 +626,7 @@ char b_is_in_check(struct Chessboard* board){
 }
 
 // will return 1 if the move will put yourself in check
-char will_be_in_check(struct Chessboard* board, char from, char to){
+char will_be_in_check(struct Chessboard *board, char from, char to){
     if(*(board->gameState+from) == 0){
         return 0;
     }
@@ -672,7 +670,7 @@ char will_be_in_check(struct Chessboard* board, char from, char to){
 }
 
 // checks if white is in checkmate (returns 1 if it is checkmate else 0)
-char w_is_checkmate(struct Chessboard* board){
+char w_is_checkmate(struct Chessboard *board){
     for(char i = 0; i < 63; i++){
         if(is_white_piece(*(board->gameState+i))){
             char* possible_moves;
@@ -687,7 +685,7 @@ char w_is_checkmate(struct Chessboard* board){
     return 1;
 }
 // checks if black is in checkmate (returns 1 if it is checkmate else 0)
-char b_is_checkmate(struct Chessboard* board){
+char b_is_checkmate(struct Chessboard *board){
     for(char i = 0; i < 63; i++){
         if(is_black_piece(*(board->gameState+i))){
             char* possible_moves;
@@ -702,7 +700,7 @@ char b_is_checkmate(struct Chessboard* board){
     return 1;
 }
 
-void get_w_pawn_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_w_pawn_moves(char *possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
     // normal move
@@ -740,7 +738,7 @@ void get_w_pawn_moves(char* possible_moves, struct Chessboard* board, char index
         }
     }
 }
-void get_b_pawn_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_b_pawn_moves(char *possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
     // normal move
@@ -781,7 +779,7 @@ void get_b_pawn_moves(char* possible_moves, struct Chessboard* board, char index
     }
 }
 
-void get_w_knight_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_w_knight_moves(char *possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
     // lower right (+17) (+10)
@@ -867,7 +865,7 @@ void get_w_knight_moves(char* possible_moves, struct Chessboard* board, char ind
         }
     }
 }
-void get_b_knight_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_b_knight_moves(char *possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
     // lower right (+17) (+10)
@@ -954,7 +952,7 @@ void get_b_knight_moves(char* possible_moves, struct Chessboard* board, char ind
     }
 }
 
-void get_w_rook_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_w_rook_moves(char *possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
     char k;
@@ -1026,7 +1024,7 @@ void get_w_rook_moves(char* possible_moves, struct Chessboard* board, char index
         }
     }
 }
-void get_b_rook_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_b_rook_moves(char* possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
     char k;
@@ -1098,7 +1096,7 @@ void get_b_rook_moves(char* possible_moves, struct Chessboard* board, char index
     }
 }
 
-void get_w_bishop_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_w_bishop_moves(char *possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
     char k;
@@ -1170,7 +1168,7 @@ void get_w_bishop_moves(char* possible_moves, struct Chessboard* board, char ind
         }
     }
 }
-void get_b_bishop_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_b_bishop_moves(char *possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
     char k;
@@ -1241,20 +1239,20 @@ void get_b_bishop_moves(char* possible_moves, struct Chessboard* board, char ind
     }
 }
 
-void get_w_queen_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_w_queen_moves(char *possible_moves, struct Chessboard *board, char index){
     get_w_rook_moves(possible_moves, board, index);
     char tmp[15];
     get_w_bishop_moves((char *) &tmp, board, index);
     strcat(possible_moves, tmp);
 }
-void get_b_queen_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_b_queen_moves(char *possible_moves, struct Chessboard *board, char index){
     get_b_rook_moves(possible_moves, board, index);
     char tmp[15];
     get_b_bishop_moves((char *) &tmp, board, index);
     strcat(possible_moves, tmp);
 }
 
-void get_w_king_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_w_king_moves(char* possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
 
@@ -1375,7 +1373,7 @@ void get_w_king_moves(char* possible_moves, struct Chessboard* board, char index
 
 
 }
-void get_b_king_moves(char* possible_moves, struct Chessboard* board, char index){
+void get_b_king_moves(char* possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
 
@@ -1496,9 +1494,8 @@ void get_b_king_moves(char* possible_moves, struct Chessboard* board, char index
     }
 }
 
-
 // TODO clean up
-char* get_possible_moves (struct Chessboard* board,  char index){
+char* get_possible_moves (struct Chessboard *board,  char index){
     char* possible_moves = calloc(27, 1);
     if(possible_moves == NULL){
         printf("calloc failed.\n");
@@ -1554,4 +1551,67 @@ char* get_possible_moves (struct Chessboard* board,  char index){
             exit(EXIT_FAILURE);
     }
     return possible_moves;
+}
+
+// TODO increase counter etc.
+int quick_move(struct Chessboard *board, char *from, char *to){
+    char from_index = convert_AlgebraicNotation_in_index(from);
+    char to_index = convert_AlgebraicNotation_in_index(to);
+    if(from_index == -1 || to_index == -1){
+        return 1;
+    }
+    char *possible_moves = get_possible_moves(board, from_index);
+    if(strchr(possible_moves, to_index) == NULL){
+        return 1;
+    }
+    free(possible_moves);
+
+    // handle movement of the king
+    if(*(board->gameState+from_index) == 'K'){
+        board->w_king_position = to_index;
+        // king-side castling
+        if(to_index == 62 && (board->castling & 0x1)){
+            board->gameState[63] = 0;
+            board->gameState[61] = 'R';
+        }
+        // queen-side castling
+        else if(to_index == 58 && (board->castling & 0x2)){
+            board->gameState[56] = 0;
+            board->gameState[59] = 'R';
+        }
+    }
+    if(*(board->gameState+from_index) == 'k'){
+        board->b_king_position = to_index;
+        // king-side castling
+        if(to_index == 6 && (board->castling & 0x4)){
+            board->gameState[7] = 0;
+            board->gameState[5] = 'r';
+        }
+        // queen-side castling
+        else if(to_index == 2 && (board->castling & 0x8)){
+            board->gameState[0] = 0;
+            board->gameState[3] = 'r';
+        }
+    }
+    // set enpassant
+    if(*(board->gameState+from_index) == 'P' && (from_index - to_index == 16)){
+        board->en_passant = (char) (to_index + 8);
+    }
+    if(*(board->gameState+from_index) == 'p' && (to_index - from_index == 16)){
+        board->en_passant = (char) (to_index - 8);
+    }
+        // handle en passant
+    if(*(board->gameState+from_index) == 'P' && to_index+8 == board->en_passant){
+        *(board->gameState+board->en_passant) = 0;
+        board->en_passant = 0;
+    }
+    if(*(board->gameState+from_index) == 'p' && to_index-8 == board->en_passant){
+        *(board->gameState+board->en_passant) = 0;
+        board->en_passant = 0;
+    }
+
+    // the actual move
+    *(board->gameState+to_index) = *(board->gameState+from_index);
+    *(board->gameState+from_index) = 0;
+    return 0;
 }
