@@ -2,7 +2,6 @@
 #define CHESS_CHESSBOARD_H
 
 struct Chessboard{
-
     /*
      * Values in the array:
      * 80 := white Pawn (P)
@@ -62,8 +61,10 @@ void init_board(struct Chessboard* board);
  * Returns 0 if it was possible.
  * Returns 1 if it was not possible.
  */
-int make_move(struct Chessboard* board, char* from, char* to);
-
+// moves piece with user interaction
+int make_move(struct Chessboard* board);
+// trys to move the pieces passed in the parameters (from->to)
+int quick_move(struct Chessboard* board, char* from, char* to);
 
 /*
  * Ends a chess game.
