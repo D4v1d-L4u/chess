@@ -128,11 +128,10 @@ int main(void){
     free(highlight);
     printf("->king on index 4\n");
 
-    quick_move(&chessboard, "e8", "g8");
+    quick_move(&chessboard, 4, 6);
     print_board(chessboard, 0);
     printf("->king(4) king-side castling\n");
-
-
-
+    make_move(&chessboard);
+    print_board(chessboard,0);
 }
 
