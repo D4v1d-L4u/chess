@@ -7,19 +7,18 @@
 char convert_AlgebraicNotation_in_index(char algebraicNotation[3]) {
     char output;
     if(algebraicNotation[0] < 'a' || algebraicNotation[0] > 'h'){
-        printf("%s is an invalid AlgebraicNotation.", algebraicNotation);
+        //printf("%s is an invalid AlgebraicNotation.\n", algebraicNotation);
         return  -1;
     }
     output = algebraicNotation[0] - 97;
     if(algebraicNotation[1] < '1' || algebraicNotation[1] > '8'){
-        printf("%s is an invalid AlgebraicNotation.", algebraicNotation);
+        //printf("%s is an invalid AlgebraicNotation\n.", algebraicNotation);
         return  -1;
     }
     output +=  (8 - (algebraicNotation[1]-48))*8;
     return output;
 }
 
-// TODO assure that dest is size 3
 void convert_index_in_AlgebraicNotation(char dest[3], char index){
     if (index < 0 || index > 63){
         printf("%d is an invalid index", index);
@@ -28,7 +27,6 @@ void convert_index_in_AlgebraicNotation(char dest[3], char index){
     sprintf(dest, "%c%d", 97 + index%8, 8 - (index / 8));
 }
 
-// TODO make set_gameState check if chess rules are violated
 void set_gameState(struct Chessboard *board, char *fen){
     memset(board->gameState, 0, 64);
     char* current = &fen[0];
@@ -1167,7 +1165,7 @@ void get_w_bishop_moves(char *possible_moves, struct Chessboard *board, char ind
             possible_moves[i] = index-k;
         }
     }
-}
+} // TODO FIX
 void get_b_bishop_moves(char *possible_moves, struct Chessboard *board, char index){
     int i = 0;
     char current_row = index/8;
@@ -1237,7 +1235,7 @@ void get_b_bishop_moves(char *possible_moves, struct Chessboard *board, char ind
             possible_moves[i] = index-k;
         }
     }
-}
+} // TODO FIX
 
 void get_w_queen_moves(char *possible_moves, struct Chessboard *board, char index){
     get_w_rook_moves(possible_moves, board, index);
@@ -1248,7 +1246,7 @@ void get_w_queen_moves(char *possible_moves, struct Chessboard *board, char inde
 void get_b_queen_moves(char *possible_moves, struct Chessboard *board, char index){
     get_b_rook_moves(possible_moves, board, index);
     char tmp[15];
-    get_b_bishop_moves((char *) &tmp, board, index);
+    get_b_bishop_moves((char *) &tmp, board, index); //TODO FIX
     strcat(possible_moves, tmp);
 }
 
@@ -1501,7 +1499,7 @@ char* get_possible_moves (struct Chessboard *board,  char index){
         printf("calloc failed.\n");
         exit(EXIT_FAILURE);
     }
-    if(index > 63){
+    if(index > 63 || index < 0){
         printf("%d is illegal index for chessboard.\n", index);
         return NULL;
     }
@@ -1638,6 +1636,21 @@ int quick_move(struct Chessboard *board, char from, char to){
     return 1;
 }
 
+void end_game(struct Chessboard *board){
+    char *fen = get_FEN(board);
+    printf("FEN of the the game: %s", fen);
+    free(fen);
+
+    char play_again[2];
+    scanf("%1s", play_again);
+    if(play_again[0] == 'y'){
+        init_board(board);
+    }
+    else{
+        exit(EXIT_SUCCESS);
+    }
+}
+
 char get_from(struct Chessboard *board){
     printf("Please enter the AlgebraicNotation of the piece you want to move:\n(Or sr(for surrender)/dr(for draw))\n");
     char algebraicNotation[3];
@@ -1666,8 +1679,9 @@ char get_from(struct Chessboard *board){
     } while (check);
     return from;
 }
+
 char get_to(struct Chessboard *board, char from){
-    printf("Please enter the AlgebraicNotation of the target:");
+    printf("Please enter the AlgebraicNotation of the target:\n");
     char algebraicNotation[3];
     char to;
     char check;
@@ -1675,12 +1689,12 @@ char get_to(struct Chessboard *board, char from){
         check = 0;
         scanf("%2s", algebraicNotation);
         to = convert_AlgebraicNotation_in_index(algebraicNotation);
-        if (from == -1){
+        if (to == -1){
             printf("AlgebraicNotation is invalid enter another one\n");
             check = 1;
         }
-        char *possible_moves = get_possible_moves(board, from);
-        if(strchr(possible_moves, to) == NULL) {
+        char *possible_moves = get_possible_moves(board, from); // TODO fix
+        if(strchr(possible_moves, to) == NULL) { // TODO FIX
             printf("Please select one of the following squares as target\n");
             int i = 0;
             while(possible_moves[i]){
@@ -1705,7 +1719,7 @@ int make_move(struct Chessboard *board){
     char confirm[2];
     do{
         from = get_from(board);
-//        highlight_legal_moves(board, from);
+        // TODO highlight_legal_moves(board, from);
         printf("Confirm the selected piece by pressing any key\nOr select another one by pressing 'q'\n");
         scanf("%1s", confirm);
     } while (confirm[0] == 'q');
@@ -1719,7 +1733,19 @@ int make_move(struct Chessboard *board){
         return make_move(board);
     }else{
         return quick_move(board, from, to);
-
+        if(is_white_piece(*(board->gameState+to))){
+            if(b_is_checkmate(board)){
+                printf("white wins!\n");
+                end_game(board);
+            }
+        }
+        else{
+            if(w_is_checkmate(board)){
+                printf("black wins!\n");
+                end_game(board);
+            }
+        }
     }
+
 }
 

@@ -127,11 +127,13 @@ int main(void){
     print_board(chessboard, highlight);
     free(highlight);
     printf("->king on index 4\n");
-
+/*
     quick_move(&chessboard, 4, 6);
     print_board(chessboard, 0);
     printf("->king(4) king-side castling\n");
     make_move(&chessboard);
     print_board(chessboard,0);
+*/
+    set_gameState(&chessboard, "3b1q1q/1N2PRQ1/rR3KBr/B4PP1/2Pk1r1b/1P2P1N1/2P2P2/8 b - -");
+    make_move(&chessboard);
 }
-
