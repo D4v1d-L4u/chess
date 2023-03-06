@@ -1553,65 +1553,173 @@ char* get_possible_moves (struct Chessboard *board,  char index){
     return possible_moves;
 }
 
-// TODO increase counter etc.
-int quick_move(struct Chessboard *board, char *from, char *to){
-    char from_index = convert_AlgebraicNotation_in_index(from);
-    char to_index = convert_AlgebraicNotation_in_index(to);
-    if(from_index == -1 || to_index == -1){
-        return 1;
+int quick_move(struct Chessboard *board, char from, char to){
+
+    if(from < 0 || from > 64 || to < 0 || to > 64){
+        return 0;
     }
-    char *possible_moves = get_possible_moves(board, from_index);
-    if(strchr(possible_moves, to_index) == NULL){
-        return 1;
+    // check whose turn it is
+    if((board->half_round_count & 0x1) == 0 && is_black_piece(*(board->gameState + from))){
+        return 0;
+    }
+    if((board->half_round_count & 0x1) == 1 && is_white_piece(*(board->gameState + from))){
+        return 0;
+    }
+    // check if the move is legal
+    char *possible_moves = get_possible_moves(board, from);
+    if(strchr(possible_moves, to) == NULL){
+        return 0;
     }
     free(possible_moves);
 
+    // increase halfmove clock
+    if(*(board->gameState + to) != 0 || *(board->gameState + from) == 'p' || *(board->gameState + from) == 'P'){
+        board->halfmove_clock = 0;
+    }
+    else{
+        board->halfmove_clock++;
+    }
     // handle movement of the king
-    if(*(board->gameState+from_index) == 'K'){
-        board->w_king_position = to_index;
+    if(*(board->gameState + from) == 'K'){
+        board->w_king_position = to;
         // king-side castling
-        if(to_index == 62 && (board->castling & 0x1)){
+        if(to == 62 && (board->castling & 0x1)){
             board->gameState[63] = 0;
             board->gameState[61] = 'R';
         }
         // queen-side castling
-        else if(to_index == 58 && (board->castling & 0x2)){
+        else if(to == 58 && (board->castling & 0x2)){
             board->gameState[56] = 0;
             board->gameState[59] = 'R';
         }
     }
-    if(*(board->gameState+from_index) == 'k'){
-        board->b_king_position = to_index;
+    if(*(board->gameState + from) == 'k'){
+        board->b_king_position = to;
         // king-side castling
-        if(to_index == 6 && (board->castling & 0x4)){
+        if(to == 6 && (board->castling & 0x4)){
             board->gameState[7] = 0;
             board->gameState[5] = 'r';
         }
         // queen-side castling
-        else if(to_index == 2 && (board->castling & 0x8)){
+        else if(to == 2 && (board->castling & 0x8)){
             board->gameState[0] = 0;
             board->gameState[3] = 'r';
         }
     }
     // set enpassant
-    if(*(board->gameState+from_index) == 'P' && (from_index - to_index == 16)){
-        board->en_passant = (char) (to_index + 8);
+    if(*(board->gameState + from) == 'P' && (from - to == 16)){
+        board->en_passant = (char) (to + 8);
     }
-    if(*(board->gameState+from_index) == 'p' && (to_index - from_index == 16)){
-        board->en_passant = (char) (to_index - 8);
+    else if(*(board->gameState + from) == 'p' && (to - from == 16)){
+        board->en_passant = (char) (to - 8);
     }
         // handle en passant
-    if(*(board->gameState+from_index) == 'P' && to_index+8 == board->en_passant){
+    else if(*(board->gameState + from) == 'P' && to + 8 == board->en_passant && board->en_passant != 0){
         *(board->gameState+board->en_passant) = 0;
         board->en_passant = 0;
     }
-    if(*(board->gameState+from_index) == 'p' && to_index-8 == board->en_passant){
+    else if(*(board->gameState + from) == 'p' && to - 8 == board->en_passant && board->en_passant != 0){
         *(board->gameState+board->en_passant) = 0;
+        board->en_passant = 0;
+    } else{
         board->en_passant = 0;
     }
 
     // the actual move
-    *(board->gameState+to_index) = *(board->gameState+from_index);
-    *(board->gameState+from_index) = 0;
-    return 0;
+    *(board->gameState + to) = *(board->gameState + from);
+    *(board->gameState + from) = 0;
+
+    // increase half move counter etc.
+    board->half_round_count++;
+    if((board->half_round_count & 0x1) == 0){
+        board->round_count ++;
+    }
+
+    return 1;
 }
+
+char get_from(struct Chessboard *board){
+    printf("Please enter the AlgebraicNotation of the piece you want to move:\n(Or sr(for surrender)/dr(for draw))\n");
+    char algebraicNotation[3];
+    char from;
+    char check;
+    do{
+        check = 0;
+        scanf("%2s", algebraicNotation);
+        from = convert_AlgebraicNotation_in_index(algebraicNotation);
+        if (from == -1){
+            printf("AlgebraicNotation is invalid enter another one\n");
+            check = 1;
+        }
+        if (is_black_piece(*(board->gameState+from) && (board->half_round_count&1) == 0)){
+            printf("Please select a white piece.\n");
+            check = 1;
+        }
+        if (is_white_piece(*(board->gameState+from) && (board->half_round_count&1) == 1)){
+            printf("Please select a black piece.\n");
+            check = 1;
+        }
+        if (*(board->gameState+from) == 0){
+            printf("Please select a non empty square.\n");
+            check = 1;
+        }
+    } while (check);
+    return from;
+}
+char get_to(struct Chessboard *board, char from){
+    printf("Please enter the AlgebraicNotation of the target:");
+    char algebraicNotation[3];
+    char to;
+    char check;
+    do{
+        check = 0;
+        scanf("%2s", algebraicNotation);
+        to = convert_AlgebraicNotation_in_index(algebraicNotation);
+        if (from == -1){
+            printf("AlgebraicNotation is invalid enter another one\n");
+            check = 1;
+        }
+        char *possible_moves = get_possible_moves(board, from);
+        if(strchr(possible_moves, to) == NULL) {
+            printf("Please select one of the following squares as target\n");
+            int i = 0;
+            while(possible_moves[i]){
+                convert_index_in_AlgebraicNotation(algebraicNotation, possible_moves[i]);
+                printf("%s ", algebraicNotation);
+                i++;
+            }
+            printf("\n");
+            check = 1;
+        }
+        free(possible_moves);
+    } while (check);
+    return to;
+}
+int make_move(struct Chessboard *board){
+    if((board->half_round_count&1) == 0){
+        printf("It is whites turn:\n");
+    }else{
+        printf("It is blacks turn:\n");
+    }
+    char from;
+    char confirm[2];
+    do{
+        from = get_from(board);
+//        highlight_legal_moves(board, from);
+        printf("Confirm the selected piece by pressing any key\nOr select another one by pressing 'q'\n");
+        scanf("%1s", confirm);
+    } while (confirm[0] == 'q');
+    char to;
+    do{
+        to = get_to(board, from);
+        printf("Confirm the selected target by pressing any key\nOr select another one by pressing 'q'\nTo select another piece press 'a':\n");
+        scanf("%1s", confirm);
+    }while(confirm[0] == 'q');
+    if(confirm[0] == 'a'){
+        return make_move(board);
+    }else{
+        return quick_move(board, from, to);
+
+    }
+}
+
